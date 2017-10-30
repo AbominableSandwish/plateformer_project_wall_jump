@@ -60,9 +60,12 @@ class MyContactListener : public b2ContactListener
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			if(contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
+			std::cout << "Contact: ";
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
+				std::cout << "Ground\n";
 				pChar->touch_ground();
 			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT)
+				std::cout << "Wall\n";
 				pChar->touch_wall();
 		}
 	}

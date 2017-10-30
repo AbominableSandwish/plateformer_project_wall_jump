@@ -20,6 +20,13 @@ enum class ContactDataType
 	PLATFORM_WALL_RIGHT
 };
 
+enum _entityCategory {
+	PLATEFORM = 0x0001,
+	SENSOR_FOOT = 0x0002,
+	SENSOR_WALL_LEFT = 0x0004,
+	SENSOR_WALL_RIGHT = 0x0008
+};
+
 struct ContactData
 {
 	void* data;

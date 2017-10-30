@@ -6,6 +6,30 @@
 #include <list>
 #include <Box2D/Box2D.h>
 
+//void CheckUserData(b2Contact* contact, Ball*& radarEntity, Ball*& aircraftEntity)
+//{
+//	b2Fixture* fixtureA = contact->GetFixtureA();
+//	b2Fixture* fixtureB = contact->GetFixtureB();
+//
+//	//make sure only one of the fixtures was a sensor
+//	bool sensorA = fixtureA->IsSensor();
+//	bool sensorB = fixtureB->IsSensor();
+//	if (!(sensorA ^ sensorB))
+//		return false;
+//
+//	Ball* entityA = static_cast<Ball*>(fixtureA->GetBody()->GetUserData());
+//	Ball* entityB = static_cast<Ball*>(fixtureB->GetBody()->GetUserData());
+//
+//	if (sensorA) { //fixtureB must be an enemy aircraft
+//		radarEntity = entityA;
+//		aircraftEntity = entityB;
+//	}
+//	else { //fixtureA must be an enemy aircraft
+//		radarEntity = entityB;
+//		aircraftEntity = entityA;
+//	}
+//}
+
 void CheckUserData(void* userData, PlatformerCharacter** pCharPtr, Platform** platformPtr)
 {	
 	ContactData* data = static_cast<ContactData*>(userData);
@@ -16,10 +40,7 @@ void CheckUserData(void* userData, PlatformerCharacter** pCharPtr, Platform** pl
 		break;
 	case ContactDataType::PLATFORM_CHARACTER:
 		*pCharPtr = static_cast<PlatformerCharacter*>(data->data);
-		for (b2Fixture* f = (((*pCharPtr)->GetBody())->GetFixtureList()); f; f = f->GetNext())
-		{
-			ContactData* data = static_cast<ContactData*>(f->GetUserData());
-		}
+		break;
 	}
 }
 
@@ -39,7 +60,10 @@ class MyContactListener : public b2ContactListener
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			pChar->touch_ground();
+			if(contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
+				pChar->touch_ground();
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT)
+				pChar->touch_wall();
 		}
 	}
 
@@ -57,8 +81,10 @@ class MyContactListener : public b2ContactListener
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			//Here
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
 			pChar->leave_ground();
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT)
+			pChar->leave_wall();
 		}
 	}
 };

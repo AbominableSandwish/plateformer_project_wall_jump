@@ -31,8 +31,11 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 		0.f);
 	coastleft.shape = &coastleft_shape;
 	contactData.data = this;
-	contactData.contactDataType = ContactDataType::PLATFORM_WALL_LEFT;
+	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
+	
 	coastleft.userData = &contactData;
+	coastleft.filter.categoryBits = SENSOR_WALL_LEFT;
+	coastleft.filter.maskBits = PLATEFORM;//radar only collides with aircraft
 
 	//b2FixtureDef coast_right;
 	//b2PolygonShape coast_right_shape;
@@ -57,6 +60,8 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 	contactData.data = this;
 	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
 	foot.userData = &contactData;
+	foot.filter.categoryBits = SENSOR_FOOT;
+	foot.filter.maskBits = PLATEFORM;//radar only collides with aircraft
 
 	
 
@@ -77,11 +82,10 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	if (foot > 0 && jump_button)
 	{
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
-
 	}
 	if (coast > 0 && jump_button)
 	{
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().y, -jump_speed));
+		body->SetLinearVelocity(b2Vec2(jump_speed*5, body->GetLinearVelocity().y));
 		
 	}
 
@@ -107,12 +111,12 @@ void PlatformerCharacter::leave_ground()
 
 void PlatformerCharacter::touch_wall()
 {
-	//coast;
+	coast++;
 }
 
 void PlatformerCharacter::leave_wall()
 {
-	//coast--;
+	coast--;
 }
 
 b2Body* PlatformerCharacter::GetBody(){

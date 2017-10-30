@@ -22,6 +22,7 @@ Platform::Platform(b2World & world, sf::Vector2f position, sf::Vector2f size)
 	contactData.contactDataType = ContactDataType::PLATFORM;
 	contactData.data = this;
 	box.userData = &contactData;
+	box.filter.categoryBits = PLATEFORM;
 	body->CreateFixture(&box);
 }
 

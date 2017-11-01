@@ -13,13 +13,14 @@ public:
 	void update(float move_axis, bool jump_button);
 	void draw(sf::RenderWindow&);
 	void touch_ground();
-	void touch_wall();//In work
+	void touch_wall(int);//In work
 	void leave_ground();
 	void leave_wall();//In work
 	b2Body* GetBody();
 private:
+	int etat_wall_jump = 0;
 	int foot = 0;
-	int coast = 0;
+	int side = 0;
 	b2Body* body;
 	sf::RectangleShape rect;
 	sf::Vector2f center_position = sf::Vector2f(400.f, 300.f);

@@ -20,35 +20,38 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 	box_shape.SetAsBox(
 		pixel2meter(size.x) / 2.f, pixel2meter(size.y) / 2.f);
 	box.shape = &box_shape;
-	box.friction = 0.f;
+	box.friction = .0f;
 
-	b2FixtureDef coastleft;
-	b2PolygonShape coastleft_shape;
-	coastleft.isSensor = true;
-	coastleft_shape.SetAsBox(
+	b2FixtureDef side_left;
+	b2PolygonShape side_left_shape;
+	side_left.isSensor = true;
+	side_left_shape.SetAsBox(
 		pixel2meter(2.0f) / 2.f, pixel2meter(size.y - 4.f) / 2.f,//taille 60 pixel de largeur et 2 pixele de longueur
 		b2Vec2(pixel2meter(-size.x) / 2, 0.f),
 		0.f);
-	coastleft.shape = &coastleft_shape;
+	side_left.shape = &side_left_shape;
 	contactData.data = this;
 	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
 	
-	coastleft.userData = &contactData;
-	coastleft.filter.categoryBits = SENSOR_WALL_LEFT;
-	coastleft.filter.maskBits = PLATEFORM;//radar only collides with aircraft
+	side_left.userData = &contactData;
+	side_left.filter.categoryBits = SENSOR_WALL_LEFT;
+	side_left.filter.maskBits = PLATEFORM;//radar only collides with aircraft
 
-	//b2FixtureDef coast_right;
-	//b2PolygonShape coast_right_shape;
-	//coast_right.isSensor = true;
-	//coast_right_shape.SetAsBox(
-	//	pixel2meter(2.0f) / 2.f, pixel2meter(size.y - 4.f) / 2.f,//taille 60 pixel de largeur et 2 pixele de longueur
-	//	b2Vec2(pixel2meter(+size.x) / 2, 0.f),
-	//	0.f);
-	//coast_right.shape = &coast_right_shape;
-	//contactData.contactDataType = ContactDataType::PLATFORM_WALL_RIGHT;
-	//contactData.data = this;
-	//coast_right.userData = &contactData;
-	
+	b2FixtureDef side_right;
+	b2PolygonShape side_right_shape;
+	side_right.isSensor = true;
+	side_right_shape.SetAsBox(
+		pixel2meter(2.0f) / 2.f, pixel2meter(size.y - 4.f) / 2.f,//taille 60 pixel de largeur et 2 pixele de longueur
+		b2Vec2(pixel2meter(+size.x) / 2, 0.f),
+		0.f);
+	side_right.shape = &side_right_shape;
+	contactData.data = this;
+	contactData.contactDataType = ContactDataType::PLATFORM_CHARACTER;
+
+	side_right.userData = &contactData;
+	side_right.filter.categoryBits = SENSOR_WALL_RIGHT;
+	side_right.filter.maskBits = PLATEFORM;//radar only collides with aircraft
+
 	b2FixtureDef foot;
 	b2PolygonShape foot_shape;
 	foot.isSensor = true;
@@ -67,7 +70,8 @@ PlatformerCharacter::PlatformerCharacter(b2World & world)
 
 
 	body->CreateFixture(&box);
-	body->CreateFixture(&coastleft);
+	body->CreateFixture(&side_left);
+	body->CreateFixture(&side_right);
 	body->CreateFixture(&foot);
 }
 
@@ -78,15 +82,39 @@ PlatformerCharacter::~PlatformerCharacter()
 void PlatformerCharacter::update(float move_axis, bool jump_button)
 {
 	//manage movements
-	body->SetLinearVelocity(b2Vec2(walk_speed*move_axis, body->GetLinearVelocity().y));
+	if (etat_wall_jump != 0) {
+		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y));
+		
+		etat_wall_jump--;
+	}
+	else {
+		body->SetLinearVelocity(b2Vec2((walk_speed*move_axis), body->GetLinearVelocity().y));
+		//body->ApplyLinearImpulse(b2Vec2((walk_speed*move_axis), body->GetLinearVelocity().y), body->GetWorldCenter(), true);
+	}
+	
 	if (foot > 0 && jump_button)
 	{
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
 	}
-	if (coast > 0 && jump_button)
+	if (side != 0 && jump_button)
 	{
-		body->SetLinearVelocity(b2Vec2(jump_speed*5, body->GetLinearVelocity().y));
-		
+		if (foot != 1) {
+			etat_wall_jump = 45;
+			body->SetLinearVelocity(b2Vec2(side*(jump_speed / 2), -jump_speed/2));
+			//body->ApplyLinearImpulse(b2Vec2(side*(jump_speed / 2), -jump_speed / 2), body->GetWorldCenter(), true);
+			//body->ApplyAngularImpulse((side*(jump_speed / 2), -jump_speed / 2), true);
+			//body->ApplyForce(b2Vec2(side*(jump_speed / 2), -jump_speed / 2), body->GetWorldCenter(), true);
+		}
+	}
+
+	if (side != 0 && move_axis != 0) {
+		if (move_axis < 0) {
+			//body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed / 50000));
+			body->ApplyForce(b2Vec2(0, -8), body->GetWorldCenter(), true);
+		}
+		if (move_axis > 0) {
+			body->ApplyForce(b2Vec2(0, -8), body->GetWorldCenter(), true);
+		}
 	}
 
 	center_position = meter2pixel(body->GetPosition());
@@ -109,14 +137,14 @@ void PlatformerCharacter::leave_ground()
 }
 
 
-void PlatformerCharacter::touch_wall()
+void PlatformerCharacter::touch_wall(int _direction)
 {
-	coast++;
+	side=_direction;
 }
 
 void PlatformerCharacter::leave_wall()
 {
-	coast--;
+	side=0;
 }
 
 b2Body* PlatformerCharacter::GetBody(){

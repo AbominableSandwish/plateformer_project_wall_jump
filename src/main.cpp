@@ -61,12 +61,18 @@ class MyContactListener : public b2ContactListener
 		if (platform != nullptr && pChar != nullptr)
 		{
 			std::cout << "Contact: ";
-			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT) {
 				std::cout << "Ground\n";
 				pChar->touch_ground();
-			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT)
+			}
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT) {
 				std::cout << "Wall\n";
-				pChar->touch_wall();
+				pChar->touch_wall(1);
+			}
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_RIGHT) {
+				std::cout << "Wall\n";
+				pChar->touch_wall(-1);
+			}
 		}
 	}
 
@@ -84,10 +90,13 @@ class MyContactListener : public b2ContactListener
 		}
 		if (platform != nullptr && pChar != nullptr)
 		{
-			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT)
-			pChar->leave_ground();
-			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT)
-			pChar->leave_wall();
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_FOOT) {
+				pChar->leave_ground();
+			}
+			if (contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_LEFT
+				|| contact->GetFixtureA()->GetFilterData().categoryBits == SENSOR_WALL_RIGHT) {
+				pChar->leave_wall();
+			}
 		}
 	}
 };
@@ -120,21 +129,22 @@ int main()
 		Platform(myWorld, sf::Vector2f(400.f,0.f)),
 		Platform(myWorld, sf::Vector2f(150.f,200.f), sf::Vector2f(200.f,50.f)),
 		Platform(myWorld, sf::Vector2f(650.f,400.f), sf::Vector2f(200.f,50.f)),
-		Platform(myWorld, sf::Vector2f(0.f,300.f), sf::Vector2f(100.f,600.f)),
-		Platform(myWorld, sf::Vector2f(800.f,300.f), sf::Vector2f(100.f,600.f)),
+		Platform(myWorld, sf::Vector2f(250.f,300.f), sf::Vector2f(100.f,600.f)),
+		Platform(myWorld, sf::Vector2f(550.f,300.f), sf::Vector2f(100.f,600.f)),
 	};
-	
+	float move_axis = 0.0f;
+
 	while (window.isOpen())
 	{
 		bool jump_button = false;
-		float move_axis = 0.0f;
+		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 		{
-			move_axis -= 1.0f;
+			move_axis = -1.0f;
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 		{
-			move_axis += 1.0f;
+			move_axis = +1.0f;
 		}
 		myWorld.Step(timeStep, velocityIterations, positionIterations);
 		sf::Event event;
@@ -143,6 +153,11 @@ int main()
 			if (event.type == sf::Event::Closed)
 			{
 				window.close();
+			}
+			if (event.type == sf::Event::KeyReleased) {
+				if (event.key.code == sf::Keyboard::Left || event.key.code == sf::Keyboard::Right) {
+					move_axis = 0.0f;
+				}
 			}
 			if (event.type == sf::Event::KeyPressed)
 			{

@@ -84,7 +84,7 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	std::cout << elapse_wall_jump.asSeconds()<< "\n";
 	//manage movements
 	if (elapse_wall_jump.asSeconds() < 1.1f) {
-		elapse_wall_jump = wall_jump.getElapsedTime();
+		elapse_wall_jump = clock_wall_jump.getElapsedTime();
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity()));
 		body->ApplyForce(b2Vec2(move_axis * 5, 0), body->GetWorldCenter(), true);
 	}
@@ -101,8 +101,8 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	if (side != 0 && jump_button)
 	{
 		if (foot != 1) {
-			wall_jump.restart();
-			elapse_wall_jump= wall_jump.getElapsedTime();
+			clock_wall_jump.restart();
+			elapse_wall_jump= clock_wall_jump.getElapsedTime();
 			body->SetLinearVelocity(b2Vec2(side*(jump_speed / 2), -jump_speed/2));
 			//body->ApplyLinearImpulse(b2Vec2(side*(jump_speed / 2), -jump_speed / 2), body->GetWorldCenter(), true);
 			//body->ApplyAngularImpulse((side*(jump_speed / 2), -jump_speed / 2), true);

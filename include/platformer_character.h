@@ -18,7 +18,7 @@ public:
 	void leave_wall();//In work
 	b2Body* GetBody();
 private:
-	sf::Clock wall_jump;
+	sf::Clock clock_wall_jump;
 	sf::Time elapse_wall_jump;
 	int foot = 0;
 	int side = 0;

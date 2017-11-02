@@ -20,6 +20,7 @@ public:
 private:
 	sf::Clock clock_wall_jump;
 	sf::Time elapse_wall_jump;
+	bool friction_wall=false;
 	int foot = 0;
 	int side = 0;
 	b2Body* body;

@@ -91,11 +91,16 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	else {
 		elapse_wall_jump.Zero;
 		body->SetLinearVelocity(b2Vec2((walk_speed*move_axis), body->GetLinearVelocity().y));
+		std::cout << body->GetLinearVelocity().y;
+		if (body->GetLinearVelocity().y >= 0) {
+			friction_wall = true;
+		}
 		//body->ApplyLinearImpulse(b2Vec2((walk_speed*move_axis), body->GetLinearVelocity().y), body->GetWorldCenter(), true);
 	}
 	
 	if (foot > 0 && jump_button)
 	{
+		friction_wall = false;
 		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, -jump_speed));
 	}
 	if (side != 0 && jump_button)
@@ -111,7 +116,9 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 	}
 
 	if (side != 0 && move_axis != 0) {
+		if (friction_wall) {
 			body->ApplyForce(b2Vec2(0, -8), body->GetWorldCenter(), true);
+		}
 	}
 
 	center_position = meter2pixel(body->GetPosition());

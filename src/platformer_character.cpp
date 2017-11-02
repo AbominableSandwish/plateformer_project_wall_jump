@@ -83,7 +83,7 @@ void PlatformerCharacter::update(float move_axis, bool jump_button)
 {
 	//manage movements
 	if (etat_wall_jump != 0) {
-		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity().x, body->GetLinearVelocity().y));
+		body->SetLinearVelocity(b2Vec2(body->GetLinearVelocity()));
 		
 		etat_wall_jump--;
 	}

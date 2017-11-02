@@ -113,7 +113,7 @@ int main()
 	//in FooTest constructor
 	myWorld.SetContactListener(&myContactListenerInstance);
 
-	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML works!");
+	sf::RenderWindow window(sf::VideoMode(1200, 800), "SFML works!");
 	window.setFramerateLimit(framerate);
 	
 
@@ -129,8 +129,8 @@ int main()
 		Platform(myWorld, sf::Vector2f(400.f,0.f)),
 		Platform(myWorld, sf::Vector2f(150.f,200.f), sf::Vector2f(200.f,50.f)),
 		Platform(myWorld, sf::Vector2f(650.f,400.f), sf::Vector2f(200.f,50.f)),
-		Platform(myWorld, sf::Vector2f(250.f,300.f), sf::Vector2f(100.f,600.f)),
-		Platform(myWorld, sf::Vector2f(550.f,300.f), sf::Vector2f(100.f,600.f)),
+		Platform(myWorld, sf::Vector2f(0.f,300.f), sf::Vector2f(100.f,600.f)),
+		Platform(myWorld, sf::Vector2f(800.f,300.f), sf::Vector2f(100.f,600.f))
 	};
 	float move_axis = 0.0f;
 

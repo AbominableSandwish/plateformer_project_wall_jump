@@ -125,12 +125,13 @@ int main()
 
 	std::list<Platform> platforms =
 	{
-		Platform(myWorld),
-		Platform(myWorld, sf::Vector2f(400.f,0.f)),
+		Platform(myWorld, sf::Vector2f(600.f,800.f), sf::Vector2f(1200.f,50.f)),
+		Platform(myWorld, sf::Vector2f(600.f,0.f), sf::Vector2f(1200.f,50.f)),
 		Platform(myWorld, sf::Vector2f(150.f,200.f), sf::Vector2f(200.f,50.f)),
-		Platform(myWorld, sf::Vector2f(650.f,400.f), sf::Vector2f(200.f,50.f)),
-		Platform(myWorld, sf::Vector2f(0.f,300.f), sf::Vector2f(100.f,600.f)),
-		Platform(myWorld, sf::Vector2f(800.f,300.f), sf::Vector2f(100.f,600.f))
+		Platform(myWorld, sf::Vector2f(650.f,500.f), sf::Vector2f(200.f,50.f)),
+		Platform(myWorld, sf::Vector2f(0.f,400.f), sf::Vector2f(100.f,800.f)),
+		Platform(myWorld, sf::Vector2f(800.f,400.f), sf::Vector2f(150.f,550.f)),
+		Platform(myWorld, sf::Vector2f(1200.f,400.f), sf::Vector2f(100.f,800.f))
 	};
 	float move_axis = 0.0f;
 
